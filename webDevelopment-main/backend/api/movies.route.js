@@ -1,23 +1,26 @@
+// Import necessary modules and controllers
 import express from 'express'
 import MoviesController from './movies.controller.js'
 import ReviewsController from './reviews.controller.js' 
 
-// get access to express router
+// Get access to the Express router
 const router = express.Router() 
 
-//router.route('/').get((req,res) => res.send('hello world'))
-//gets full movie object
+// Route to get all movies
 router.route('/').get(MoviesController.apiGetMovies)
 
-//route gets specific movies and their ratings
+// Route to get a specific movie by ID and its details
 router.route("/id/:id").get(MoviesController.apiGetMovieById)
+
+// Route to get a list of available movie ratings
 router.route("/ratings").get(MoviesController.apiGetRatings)
 
-//CRUD functioning for reviews
+// CRUD routes for movie reviews
 router
     .route("/review")
-    .post(ReviewsController.apiPostReview)
-    .put(ReviewsController.apiUpdateReview)
-    .delete(ReviewsController.apiDeleteReview)
+    .post(ReviewsController.apiPostReview)     // Create a new review
+    .put(ReviewsController.apiUpdateReview)    // Update an existing review
+    .delete(ReviewsController.apiDeleteReview) // Delete a review
 
+// Export the router to be used in other parts of the app
 export default router

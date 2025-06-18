@@ -1,16 +1,24 @@
+// Import necessary modules
 import express from 'express'
 import cors from 'cors'
 import movies from './api/movies.route.js'
 
-const app = express() //create the server
+// Create the server
+const app = express()
 
-// Attach the cors and express.json middleware that express will use
-
+// Enable CORS for cross-origin requests
 app.use(cors())
+
+// Parse incoming JSON requests
 app.use(express.json())
 
+// Route all /api/v1/movies requests to the movies router
 app.use("/api/v1/movies", movies)
-app.use('*', (req,res)=>{
-res.status(404).json({error: "not found"})
+
+// Catch-all route for undefined endpoints
+app.use('*', (req, res) => {
+  res.status(404).json({ error: "not found" })
 })
+
+// Export the app for use elsewhere
 export default app

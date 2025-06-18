@@ -5,13 +5,12 @@ import MoviesDAO from './dao/moviesDAO.js'
 import ReviewsDAO from './dao/reviewsDAO.js' 
 
 async function main(){        
- 
-    dotenv.config()    
+    dotenv.config()  
+    console.log("Mongo URI:", process.env.MOVIEREVIEWS_DB_URI); // DEBUG LOG
     const client = new mongodb.MongoClient(process.env.MOVIEREVIEWS_DB_URI)
-    const port = process.env.PORT || 8000     
+    const port = process.env.PORT || 5000    
  
     try {
-        // Connect to the MongoDB cluster
         await client.connect()
         await MoviesDAO.injectDB(client)
         await ReviewsDAO.injectDB(client)
@@ -26,4 +25,4 @@ async function main(){
     } 
 }
 
-main().catch(console.error);
+export default app

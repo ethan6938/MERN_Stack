@@ -1,27 +1,34 @@
+// Import the Movies Data Access Object (DAO)
 import MoviesDAO from '../dao/moviesDAO.js' 
 
-export default class MoviesController{
+// Define the MoviesController class
+export default class MoviesController {
 
-    static async apiGetMovies(req,res,next){
-        //displays whats typed in or 20 movies/page
+    // Handles GET requests for a list of movies with optional filters and pagination
+    static async apiGetMovies(req, res, next) {
+        // Set movies per page (default to 20 if not specified)
         const moviesPerPage = req.query.moviesPerPage ? parseInt(req.query.moviesPerPage) : 20
-        //displays whats typed in or page 0
+        
+        // Set current page (default to 0 if not specified)
         const page = req.query.page ? parseInt(req.query.page) : 0
 
-        //whats typed is pushed to filters object, updating values
+        // Set filters based on query parameters (title or rating)
         let filters = {} 
-        if(req.query.rated){            
+        if (req.query.rated) {            
             filters.rated = req.query.rated
-        } 
-        else if(req.query.title){            
+        } else if (req.query.title) {            
             filters.title = req.query.title            
         }
-         
-        //links to movies DAO to access filters
-        const { moviesList, totalNumMovies } = await MoviesDAO.getMovies({filters, page, moviesPerPage})
-        
-        //response displays in json format
-        let response ={
+
+        // Fetch filtered and paginated movie data from DAO
+        const { moviesList, totalNumMovies } = await MoviesDAO.getMovies({
+            filters,
+            page,
+            moviesPerPage
+        })
+
+        // Format and send JSON response
+        let response = {
             movies: moviesList,
             page: page,
             filters: filters,
@@ -30,36 +37,43 @@ export default class MoviesController{
         }
         res.json(response) 
     }
-    static async apiGetMovieById(req,res, next){
-        try{
-            //look for parameters, whats typed atthe end of the url
+
+    // Handles GET requests for a specific movie by ID
+    static async apiGetMovieById(req, res, next) {
+        try {
+            // Extract ID from request parameters
             let id = req.params.id || {}
-            //id is the identifier
+
+            // Get movie by ID from DAO
             let movie = await MoviesDAO.getMovieById(id)
-            //error handling if movie id isn't found in movie object
-            if(!movie){ 
-                res.status(404).json({ error: "not found"})
+
+            // If movie not found, respond with 404 error
+            if (!movie) { 
+                res.status(404).json({ error: "not found" })
                 return
             }
+
+            // Respond with movie data
             res.json(movie)
-        }
-        catch(e){
-            //error message
+        } catch (e) {
+            // Handle and log error
             console.log(`api, ${e}`)
-            res.status(500).json({error: e})
+            res.status(500).json({ error: e })
         }
     }
 
-    static async apiGetRatings(req,res,next){
-        try{ 
-            //respond with property in json format
+    // Handles GET requests for available movie ratings
+    static async apiGetRatings(req, res, next) {
+        try {
+            // Get list of ratings from DAO
             let propertyTypes = await MoviesDAO.getRatings()
+
+            // Respond with the list of ratings
             res.json(propertyTypes)
-        }
-        catch(e){
-            //error message
-            console.log(`api,${e}`)
-            res.status(500).json({error: e})
+        } catch (e) {
+            // Handle and log error
+            console.log(`api, ${e}`)
+            res.status(500).json({ error: e })
         }
     }
 
