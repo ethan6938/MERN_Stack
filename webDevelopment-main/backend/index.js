@@ -1,28 +1,28 @@
-import app from './server.js'
-import mongodb from "mongodb"
-import dotenv from "dotenv" 
-import MoviesDAO from './dao/moviesDAO.js' 
-import ReviewsDAO from './dao/reviewsDAO.js' 
+import app from './server.js';
+import mongodb from 'mongodb';
+import dotenv from 'dotenv';
+import MoviesDAO from './dao/moviesDAO.js';
+import ReviewsDAO from './dao/reviewsDAO.js';
 
-async function main(){        
-    dotenv.config()  
-    console.log("Mongo URI:", process.env.MOVIEREVIEWS_DB_URI); // DEBUG LOG
-    const client = new mongodb.MongoClient(process.env.MOVIEREVIEWS_DB_URI)
-    const port = process.env.PORT || 5000    
- 
-    try {
-        await client.connect()
-        await MoviesDAO.injectDB(client)
-        await ReviewsDAO.injectDB(client)
+async function main() {
+  dotenv.config();
+  console.log("Mongo URI:", process.env.MOVIEREVIEWS_DB_URI); // DEBUG LOG
 
-        app.listen(port, () =>{
-            console.log('server is running on port:'+port);        
-        })
+  const client = new mongodb.MongoClient(process.env.MOVIEREVIEWS_DB_URI);
+  const port = process.env.PORT || 5000;
 
-    } catch (e) {
-        console.error(e);        
-        process.exit(1)
-    } 
+  try {
+    await client.connect();
+    await MoviesDAO.injectDB(client);
+    await ReviewsDAO.injectDB(client);
+
+    app.listen(port, () => {
+      console.log('Server is running on port: ' + port);
+    });
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  }
 }
 
-export default app
+main().catch(console.error); // 👈 THIS IS WHAT WAS MISSING

@@ -1,80 +1,75 @@
-// Import the Movies Data Access Object (DAO)
-import MoviesDAO from '../dao/moviesDAO.js' 
+import MoviesDAO from '../dao/moviesDAO.js'
 
-// Define the MoviesController class
 export default class MoviesController {
+  // Get a paginated list of movies, with optional filters (title, rated)
+  static async apiGetMovies(req, res) {
+    const moviesPerPage = parseInt(req.query.moviesPerPage) || 20
+    const page = parseInt(req.query.page) || 0
 
-    // Handles GET requests for a list of movies with optional filters and pagination
-    static async apiGetMovies(req, res, next) {
-        // Set movies per page (default to 20 if not specified)
-        const moviesPerPage = req.query.moviesPerPage ? parseInt(req.query.moviesPerPage) : 20
-        
-        // Set current page (default to 0 if not specified)
-        const page = req.query.page ? parseInt(req.query.page) : 0
+    const filters = {}
+    if (req.query.rated) filters.rated = req.query.rated
+    if (req.query.title) filters.title = req.query.title
 
-        // Set filters based on query parameters (title or rating)
-        let filters = {} 
-        if (req.query.rated) {            
-            filters.rated = req.query.rated
-        } else if (req.query.title) {            
-            filters.title = req.query.title            
-        }
-
-        // Fetch filtered and paginated movie data from DAO
-        const { moviesList, totalNumMovies } = await MoviesDAO.getMovies({
-            filters,
-            page,
-            moviesPerPage
-        })
-
-        // Format and send JSON response
-        let response = {
-            movies: moviesList,
-            page: page,
-            filters: filters,
-            entries_per_page: moviesPerPage,
-            total_results: totalNumMovies,
-        }
-        res.json(response) 
+    try {
+      const { moviesList, totalNumMovies } = await MoviesDAO.getMovies({ filters, page, moviesPerPage })
+      res.json({
+        movies: moviesList,
+        page,
+        filters,
+        entries_per_page: moviesPerPage,
+        total_results: totalNumMovies,
+      })
+    } catch (e) {
+      console.error(`apiGetMovies error: ${e}`)
+      res.status(500).json({ error: e.toString() })
     }
+  }
 
-    // Handles GET requests for a specific movie by ID
-    static async apiGetMovieById(req, res, next) {
-        try {
-            // Extract ID from request parameters
-            let id = req.params.id || {}
+  // Get a single movie by its ID
+  static async apiGetMovieById(req, res) {
+    try {
+      const id = req.params.id
+      const movie = await MoviesDAO.getMovieById(id)
 
-            // Get movie by ID from DAO
-            let movie = await MoviesDAO.getMovieById(id)
+      if (!movie) return res.status(404).json({ error: "Movie not found" })
 
-            // If movie not found, respond with 404 error
-            if (!movie) { 
-                res.status(404).json({ error: "not found" })
-                return
-            }
-
-            // Respond with movie data
-            res.json(movie)
-        } catch (e) {
-            // Handle and log error
-            console.log(`api, ${e}`)
-            res.status(500).json({ error: e })
-        }
+      res.json(movie)
+    } catch (e) {
+      console.error(`apiGetMovieById error: ${e}`)
+      res.status(500).json({ error: e.toString() })
     }
+  }
 
-    // Handles GET requests for available movie ratings
-    static async apiGetRatings(req, res, next) {
-        try {
-            // Get list of ratings from DAO
-            let propertyTypes = await MoviesDAO.getRatings()
-
-            // Respond with the list of ratings
-            res.json(propertyTypes)
-        } catch (e) {
-            // Handle and log error
-            console.log(`api, ${e}`)
-            res.status(500).json({ error: e })
-        }
+  // Get all unique movie ratings
+  static async apiGetRatings(req, res) {
+    try {
+      const ratings = await MoviesDAO.getRatings()
+      res.json(ratings)
+    } catch (e) {
+      console.error(`apiGetRatings error: ${e}`)
+      res.status(500).json({ error: e.toString() })
     }
+  }
 
+  // Add a new movie (requires title and year)
+  static async apiPostMovie(req, res) {
+    try {
+      const movieData = req.body
+
+      if (!movieData.title || !movieData.year) {
+        return res.status(400).json({ error: "Missing required fields: title or year" })
+      }
+
+      const result = await MoviesDAO.addMovie(movieData)
+
+      if (!result.acknowledged) {
+        return res.status(500).json({ error: "Failed to add movie" })
+      }
+
+      res.status(201).json({ message: "Movie added", movieId: result.insertedId })
+    } catch (e) {
+      console.error(`apiPostMovie error: ${e}`)
+      res.status(500).json({ error: e.toString() })
+    }
+  }
 }

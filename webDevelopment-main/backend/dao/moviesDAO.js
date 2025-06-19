@@ -98,4 +98,14 @@ export default class MoviesDAO {
         }
     }
 
+    // Add a new movie document to the collection
+    static async addMovie(movieData) {
+        try {
+            return await movies.insertOne(movieData)
+        } catch (e) {
+            console.error(`Unable to add movie: ${e}`)
+            return { acknowledged: false }
+        }
+    }
+
 }
