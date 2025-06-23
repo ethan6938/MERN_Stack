@@ -51,25 +51,18 @@ export default class MoviesController {
     }
   }
 
-  // Add a new movie (requires title and year)
-  static async apiPostMovie(req, res) {
+  static async apiPostMovie(req, res, next) {
+    console.log("apiPostMovie called", req.body);
     try {
-      const movieData = req.body
-
-      if (!movieData.title || !movieData.year) {
-        return res.status(400).json({ error: "Missing required fields: title or year" })
-      }
-
-      const result = await MoviesDAO.addMovie(movieData)
-
-      if (!result.acknowledged) {
-        return res.status(500).json({ error: "Failed to add movie" })
-      }
-
-      res.status(201).json({ message: "Movie added", movieId: result.insertedId })
+        const movieData = req.body;
+        const insertResult = await MoviesDAO.addMovie(movieData);
+        if (insertResult.insertedId) {
+            res.status(201).json({ status: "success", insertedId: insertResult.insertedId });
+        } else {
+            res.status(500).json({ error: "Failed to insert movie" });
+        }
     } catch (e) {
-      console.error(`apiPostMovie error: ${e}`)
-      res.status(500).json({ error: e.toString() })
+        res.status(500).json({ error: e.message });
     }
-  }
+}
 }
