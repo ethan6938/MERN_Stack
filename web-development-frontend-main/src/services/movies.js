@@ -34,7 +34,7 @@ class MovieDataService {
         return axios.get("http://localhost:5000/api/v1/movies/ratings");
     }
 }
-
+jjjjjj
 const movieDataService = new MovieDataService();
 
 export default movieDataService;
