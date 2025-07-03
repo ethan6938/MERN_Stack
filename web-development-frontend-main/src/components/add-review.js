@@ -57,9 +57,13 @@ const AddReview = props => {
       }
    }
 
-
    return (
       <div>
+         {/* 👇 Welcome message added here */}
+         <h5 style={{ marginBottom: '20px' }}>
+            Welcome {props.user ? props.user.name : 'Guest'}
+         </h5>
+
          {/* uses a ternary operator */}
          {submitted ? (
             <div>
