@@ -1,5 +1,4 @@
 // Import necessary modules
-import app from './backend/index.js';
 import express from 'express'
 import cors from 'cors'
 import movies from './backend/api/movies.route.js'
