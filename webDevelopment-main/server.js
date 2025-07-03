@@ -1,24 +1,27 @@
-// Import necessary modules
-import express from 'express'
-import cors from 'cors'
-import movies from './backend/api/movies.route.js'
+import dotenv from 'dotenv'
+import mongodb from 'mongodb'
+import app from './backend/index.js'  // adjust path if needed
+import MoviesDAO from './backend/dao/moviesDAO.js'
+import ReviewsDAO from './backend/dao/reviewsDAO.js'
 
-// Create the server
-const app = express()
+dotenv.config()
 
-// Enable CORS for cross-origin requests
-app.use(cors())
+const port = process.env.PORT || 5000
 
-// Parse incoming JSON requests
-app.use(express.json())
+async function startServer() {
+  try {
+    const client = new mongodb.MongoClient(process.env.MOVIEREVIEWS_DB_URI)
+    await client.connect()
+    await MoviesDAO.injectDB(client)
+    await ReviewsDAO.injectDB(client)
 
-// Route all /api/v1/movies requests to the movies router
-app.use("/api/v1/movies", movies)
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`Server running on port ${port}`)
+    })
+  } catch (e) {
+    console.error(e)
+    process.exit(1)
+  }
+}
 
-// Catch-all route for undefined endpoints
-app.use('*', (req, res) => {
-  res.status(404).json({ error: "not found" })
-})
-
-// Export the app for use elsewhere
-export default app
+startServer()
