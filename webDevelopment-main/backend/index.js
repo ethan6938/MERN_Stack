@@ -9,7 +9,7 @@ async function main() {
   console.log("Mongo URI:", process.env.MOVIEREVIEWS_DB_URI); // DEBUG LOG
 
   const client = new mongodb.MongoClient(process.env.MOVIEREVIEWS_DB_URI);
-  const port = process.env.PORT || 5000;
+  const port = process.env.PORT || "https//mern-stack-snowy.vercel.app/";
 
   try {
     await client.connect();
