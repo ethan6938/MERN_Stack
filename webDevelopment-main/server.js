@@ -1,7 +1,7 @@
 // Import necessary modules
 import express from 'express'
 import cors from 'cors'
-import movies from './api/movies.route.js'
+import movies from './backend/api/movies.route.js'
 
 // Create the server
 const app = express()
