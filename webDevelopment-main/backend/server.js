@@ -13,7 +13,7 @@ app.use(cors())
 app.use(express.json())
 
 // Route all /api/v1/movies requests to the movies router
-app.use("/api/v1/movies", movies)
+app.use("https://mern-stack-ofpi.vercel.app/api/v1/movies", movies)
 
 // Catch-all route for undefined endpoints
 app.use('*', (req, res) => {
