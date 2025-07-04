@@ -23,7 +23,7 @@ app.use('*', (req, res) => {
 });
 
 async function main() {
-  const client = new mongodb.MongoClient(process.env.MOVIEREVIEWS_DB_URI);
+  const client = new mongodb.MongoClient("mongodb+srv://ethan:nO3H7fVE29DvMM6s@cluster0.3gl5fbf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
   const port = process.env.PORT || 5000;
 
   try {
