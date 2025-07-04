@@ -5,7 +5,7 @@ import MoviesDAO from './backend/dao/moviesDAO.js'
 import ReviewsDAO from './backend/dao/reviewsDAO.js'
 
 dotenv.config()
-const app = express();
+
 
 const port = process.env.PORT || 5000
 
