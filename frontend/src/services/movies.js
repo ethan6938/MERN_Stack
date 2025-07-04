@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://mern-stack-ofpi.vercel.app/api/v1/movies";
+const BASE_URL = "https://backend-z7o5.onrender.com/api/v1/movies";
 
 class MovieDataService {
   getAll(page = 0) {
