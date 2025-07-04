@@ -1,7 +1,6 @@
-import app from '../server.js';
-import express from 'express'
-import cors from 'cors'
-import movies from './api/movies.route.js'  // adjust relative paths if needed
+import express from 'express';
+import cors from 'cors';
+import movies from './api/movies.route.js';
 import mongodb from 'mongodb';
 import dotenv from 'dotenv';
 import MoviesDAO from './dao/moviesDAO.js';
@@ -9,7 +8,7 @@ import ReviewsDAO from './dao/reviewsDAO.js';
 
 dotenv.config();
 
-const app = express();
+const app = express(); // Initialize app here
 
 // Middleware
 app.use(cors());
@@ -42,4 +41,3 @@ async function main() {
 }
 
 main().catch(console.error);
-
